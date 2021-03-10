@@ -13,25 +13,38 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
 
     @IBOutlet weak var price: UILabel!
     @IBOutlet weak var count: UILabel!
-    
+    @IBOutlet weak var Stepper: UIStepper!
     @IBOutlet weak var guitarView: UIImageView!
     @IBOutlet weak var priceView: UILabel!
     @IBOutlet weak var namePicker: UIPickerView!
+    @IBOutlet weak var buyButton: UIButton!
     var pickerData: [String] = [String]()
     var itemData: [Item] = [Item]()
     var currentItem: Item!
+    var basketItems: [Item]!
+
   
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.namePicker.delegate = self
         self.namePicker.dataSource = self
-        itemData = [Item(name: "Электрогитара", count: 1, price: 10000), Item(name: "Басгитара", count: 1, price: 25000), Item(name: "Акустическая гитара", count: 1, price: 50000)]
+        //guitarView.image = UIImage.init(named: "image-3")
+        itemData = [
+            Item(name: "Электрогитара", count: 1, price: 10000, picture: UIImage(named: "image-3")!),
+            Item(name: "Басгитара", count: 1, price: 25000, picture: UIImage(named: "image-2")!),
+            Item(name: "Акустическая гитара", count: 1, price: 50000, picture: UIImage(named: "image-1")!)]
         pickerData = ["Электрогитара", "Басгитара", "Акустическая гитара"]
         
-        guitarView.image = UIImage.init(named: "image-3")
+       basketItems=itemData
     }
 
-      // Number of columns of data
+    @IBAction func stepperAction(_ sender: UIStepper) {
+        count.text = String(Int(sender.value))
+        price.text = String(currentItem.price*Int(Stepper.value))
+        currentItem.count=Int(sender.value)
+    }
+    // Number of columns of data
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
           return 1
       }
@@ -50,10 +63,12 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
     }
     
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
        if let basketVC = segue.destination as? BasketVC{
-        basketVC.item = currentItem
+        basketVC.basketItems = self.basketItems
+        
      }
         
     }
@@ -63,8 +78,24 @@ class ViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 currentItem = i
             }
         }
-        price.text = String(currentItem.price)
-        priceView.text = String(currentItem.price)
+        Stepper.value = 1
+        count.text = String(Int(Stepper.value))
+        /*let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .currency*/
+        price.text = String( currentItem.price)
+        priceView.text = String( currentItem.price)
+        guitarView.image = currentItem.picture
+        
+    }
+    
+    @IBAction func onBuyButtonClick(_ sender: Any) {
+        Stepper.value = 1
+        count.text = String(Int(Stepper.value))
+        price.text = String( currentItem.price)
+        priceView.text = String( currentItem.price)
+        
+        basketItems.append(currentItem)
+        
     }
     
 }
@@ -73,12 +104,14 @@ class Item{
   var name: String!
   var count: Int!
   var price: Int!
+    var picture: UIImage!
    
    
-    init(name: String, count: Int, price: Int) {
-      self.name = name
-    self.count = count
-    self.price = price
+    init(name: String, count: Int, price: Int, picture: UIImage) {
+        self.name = name
+        self.count = count
+        self.price = price
+        self.picture = picture
     }
 }
 

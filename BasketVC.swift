@@ -12,15 +12,30 @@ class BasketVC: UIViewController {
     @IBOutlet weak var name1: UILabel!
     @IBOutlet weak var count1: UILabel!
     @IBOutlet weak var price1: UILabel!
+    @IBOutlet weak var clearBascker: UIButton!
     
-    var item: Item!
+    var basketItems: [Item]!
     
    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        name1.text = item.name
-        count1.text = String(item.count)
-        price1.text = String(item.price)
+        
+        name1.text = basketItems[basketItems.count-1].name
+        count1.text = String(basketItems[basketItems.count-1].count)
+        price1.text = String(basketItems[basketItems.count-1].price*basketItems[basketItems.count-1].count)
 }
+    @IBAction func onClearButtonClick(_ sender: Any) {
+        
+        name1.text = ""
+        count1.text = ""
+        price1.text = ""
+        basketItems.removeAll()
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+       if let viewController = segue.destination as? ViewController{
+        viewController.basketItems = self.basketItems
+}
+    }
 }
